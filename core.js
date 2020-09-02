@@ -147,10 +147,8 @@ class WechatCli {
   createTemplate(answer) {
     const { name, pageInit = [] } = answer
     const dirPath = this.typeAnswer.type === 'page' ? `${this.pagesPath}/${name}` : `${this.componentsPath}/${name}`
-    const tempPath = 'pagesTemplate/template'
+    const tempPath = '/template'
     const tempDir = path.resolve(__dirname, 'pagesTemplate')
-
-    this.removeDir()
 
     loading.color = 'green'
     loading.text = '正在疯狂加载中'
@@ -159,8 +157,7 @@ class WechatCli {
     const hasDir = fs.existsSync(tempDir)
     !hasDir && fs.mkdirSync(tempDir)
 
-    
-    download(`boo-boom/wechat-file-template#${this.typeAnswer.type === 'page' ? 'pageTemplate' : 'componentTemplate'}`, './pagesTemplate', { clone: true }, error => {
+    download(`boo-boom/wechat-file-template#${this.typeAnswer.type === 'page' ? 'pageTemplate' : 'componentTemplate'}`, tempDir, { clone: true }, error => {
       if(error){
         loading.fail(`创建失败: ${error.message}`)
       } else {
@@ -169,20 +166,20 @@ class WechatCli {
         loading.start()
         
         // 创建.js模版
-        const jsStr = pug.renderFile(path.resolve(__dirname, `./${tempPath}/js.pug`), {
+        const jsStr = pug.renderFile(path.join(tempDir, `${tempPath}/js.pug`), {
           shareTitle: name,
           sharePath: `/pages/${name}/${name}`,
           pageInit,
         })
         const jsTemp = jsStr.replace(/(^\<div\>)|(\<\/div\>$)/gi, '')
         // 创建.wxml模版
-        const wxmlTemp = pug.renderFile(path.resolve(__dirname, `./${tempPath}/wxml.pug`), {
+        const wxmlTemp = pug.renderFile(path.join(tempDir, `${tempPath}/wxml.pug`), {
           name,
         })
         // 创建.wxss模版
-        const wxssTemp = pug.renderFile(path.resolve(__dirname, `./${tempPath}/wxss.pug`))
+        const wxssTemp = pug.renderFile(path.join(tempDir, `${tempPath}/wxss.pug`))
         // 创建.json模版
-        const jsonTemp = fs.readJSONSync(path.resolve(__dirname, `./${tempPath}/temp.json`))
+        const jsonTemp = fs.readJSONSync(path.join(tempDir, `${tempPath}/temp.json`))
         if (pageInit.length) {
           pageInit.forEach(item => {
             switch (item) {
@@ -211,16 +208,19 @@ class WechatCli {
   }
 
   updateAppJson(name) {
-    const appJson = fs.readJSONSync(path.resolve(this.rootPath, './app.json'))
-    const pagePath = `pages/${name}/${name}`
-    if(!appJson.pages.includes(pagePath)) {
-      appJson.pages.push(pagePath)
+    const appExist = fs.pathExistsSync(path.resolve(this.rootPath, './app.json'))
+    if (appExist) {
+      const appJson = fs.readJSONSync(path.resolve(this.rootPath, './app.json'))
+      const pagePath = `pages/${name}/${name}`
+      if(!appJson.pages.includes(pagePath)) {
+        appJson.pages.push(pagePath)
+      }
+      fs.writeJsonSync(path.resolve(this.rootPath, './app.json'), appJson, { spaces: '\t'})
     }
-    fs.writeJsonSync(path.resolve(this.rootPath, './app.json'), appJson, { spaces: '\t'})
   }
 
   removeDir() {
-    fs.emptyDir(path.resolve(__dirname, './pagesTemplate'))
+    fs.removeSync(path.resolve(__dirname, './pagesTemplate'))
   }
 }
 
