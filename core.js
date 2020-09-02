@@ -159,6 +159,7 @@ class WechatCli {
     const hasDir = fs.existsSync(tempDir)
     !hasDir && fs.mkdirSync(tempDir)
 
+    
     download(`boo-boom/wechat-file-template#${this.typeAnswer.type === 'page' ? 'pageTemplate' : 'componentTemplate'}`, './pagesTemplate', { clone: true }, error => {
       if(error){
         loading.fail(`创建失败: ${error.message}`)
