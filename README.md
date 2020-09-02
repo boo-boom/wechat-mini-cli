@@ -5,7 +5,7 @@
 ## 安装
 
 ```bash
-npm i wechat-mini create -g
+npm i wechat-mini-cli -g
 ```
 
 ## 使用
@@ -13,5 +13,5 @@ npm i wechat-mini create -g
 在当前微信小程序项目根目录使用，根据提示进行操作即可。
 
 ```bash
-wechat-mini create
+wx-mini-page create
 ```

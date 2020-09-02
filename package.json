@@ -1,11 +1,11 @@
 {
   "name": "wechat-mini-cli",
   "binName": "wechat-mini",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "main": "index.js",
   "bin": {
-    "wechat-mini": "index.js"
+    "wx-mini-page": "index.js"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
